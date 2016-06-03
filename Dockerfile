@@ -66,9 +66,9 @@ RUN mkdir -p /var/log/supervisor \
   && chmod g+w /var/log/supervisor \
   && chgrp rserver /etc/supervisor/conf.d/supervisord.conf
 
-RUN mkdir /run/lock \
-  && mkdir /var/lock/subsys \
-  && mkdir /var/lock/subsys/rstudio-server
+# RUN mkdir /run/lock \
+#   && mkdir /var/lock/subsys \
+#   && mkdir /var/lock/subsys/rstudio-server
 
 RUN alternatives --install /usr/bin/R R /usr/local/src/R/R-3.2.1/bin/R 1
 RUN alternatives --install /usr/bin/Rscript Rscript /usr/local/src/R/R-3.2.1/bin/Rscript 1
