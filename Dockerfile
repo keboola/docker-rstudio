@@ -73,6 +73,8 @@ RUN mkdir -p /var/log/supervisor \
 RUN alternatives --install /usr/bin/R R /usr/local/src/R/R-3.2.1/bin/R 1
 RUN alternatives --install /usr/bin/Rscript Rscript /usr/local/src/R/R-3.2.1/bin/Rscript 1
 
+RUN chmod ug+x /usr/bin/userconf.sh
+
 EXPOSE 8787
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
