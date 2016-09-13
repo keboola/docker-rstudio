@@ -29,7 +29,6 @@ RUN VER=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-serv
   && yum -y install --nogpgcheck rstudio-server-rhel-${VER}-x86_64.rpm \
   && yum clean all \
   && rm rstudio-server-rhel-${VER}-x86_64.rpm \
-  && rm rstudio-server-*-amd64.deb \
   && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc /usr/local/bin \
   && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc /usr/local/bin \
   && wget https://github.com/jgm/pandoc-templates/archive/1.15.0.6.tar.gz \
@@ -44,9 +43,9 @@ RUN echo '\n\
 \n# where this Docker container is running. \
 \nif(is.na(Sys.getenv("HTTR_LOCALHOST", unset=NA))) { \
 \n  options(httr_oob_default = TRUE) \
-\n}' >> /etc/R/Rprofile.site
+\n}' >> $R_HOME/etc/Rprofile.site
 
-RUN echo "PATH=$PATH" >> /etc/R/Renviron.site
+RUN echo "PATH=$PATH" >> $R_HOME/etc/Renviron.site
 
 ## Use s6
 RUN wget -P /tmp/ https://github.com/just-containers/s6-overlay/releases/download/v1.11.0.1/s6-overlay-amd64.tar.gz \
