@@ -36,15 +36,6 @@ RUN VER=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-serv
   && cp -r pandoc-templates*/* /opt/pandoc/templates && rm -rf pandoc-templates* \
   && mkdir /root/.pandoc && ln -s /opt/pandoc/templates /root/.pandoc/templates 
 
-## Ensure that if both httr and httpuv are installed downstream, oauth 2.0 flows still work correctly.
-RUN echo '\n\
-\n# Configure httr to perform out-of-band authentication if HTTR_LOCALHOST \
-\n# is not set since a redirect to localhost may not work depending upon \
-\n# where this Docker container is running. \
-\nif(is.na(Sys.getenv("HTTR_LOCALHOST", unset=NA))) { \
-\n  options(httr_oob_default = TRUE) \
-\n}' >> $R_HOME/etc/Rprofile.site
-
 RUN echo "PATH=$PATH" >> $R_HOME/etc/Renviron.site
 
 ## Use s6
