@@ -12,8 +12,14 @@ chgrp rserver -R $R_HOME/etc/
   		  
 useradd $USER
 usermod -a -G root $USER
+# set home directory
+usermod -d /data/ $USER 
 echo "$USER:$PASSWORD" | chpasswd
 
 ## add these to the global environment so they are avialable to the RStudio user 
 echo "HTTR_LOCALHOST=$HTTR_LOCALHOST" >> $R_HOME/etc/Renviron.site
 echo "HTTR_PORT=$HTTR_PORT" >> $R_HOME/etc/Renviron.site
+
+# directory for fake r session data
+mkdir -p /data/.rstudio/sdb/per/t/
+Rscript /tmp/rsession_init.R

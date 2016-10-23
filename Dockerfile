@@ -44,6 +44,10 @@ RUN wget -P /tmp/ https://github.com/just-containers/s6-overlay/releases/downloa
 
 COPY userconf.sh /etc/cont-init.d/conf
 COPY run.sh /etc/services.d/rstudio/run
+COPY rserver.conf /etc/rstudio/
+COPY rsession.conf /etc/rstudio/
+COPY rsession_init.R /tmp
+COPY templatefile.json /tmp
 
 EXPOSE 8787
 
