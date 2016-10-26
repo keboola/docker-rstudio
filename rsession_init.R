@@ -1,5 +1,9 @@
 
 rscript <- Sys.getenv('SCRIPT')
+# because EOS is null, rscript mustn't be empty
+if (nchar(rscript) == 0) {
+    rscript = ' '
+}
 fileName <- '/tmp/templatefile.json'
 data <- readChar(fileName, file.info(fileName)$size)
 configData <- jsonlite::fromJSON(data)
