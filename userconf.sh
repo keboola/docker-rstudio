@@ -16,6 +16,9 @@ usermod -a -G root $USER
 usermod -d /data/ $USER 
 echo "$USER:$PASSWORD" | chpasswd
 
+# fix permission issue with shared volumes
+usermod -a -G root rstudio-server
+
 ## add these to the global environment so they are avialable to the RStudio user 
 echo "HTTR_LOCALHOST=$HTTR_LOCALHOST" >> $R_HOME/etc/Renviron.site
 echo "HTTR_PORT=$HTTR_PORT" >> $R_HOME/etc/Renviron.site
