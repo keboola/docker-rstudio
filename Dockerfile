@@ -48,6 +48,7 @@ COPY rserver.conf /etc/rstudio/
 COPY rsession.conf /etc/rstudio/
 COPY rsession_init.R /tmp
 COPY templatefile.json /tmp
+COPY pcs /tmp/pcs
 
 EXPOSE 8787
 

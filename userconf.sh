@@ -20,7 +20,15 @@ echo "$USER:$PASSWORD" | chpasswd
 echo "HTTR_LOCALHOST=$HTTR_LOCALHOST" >> $R_HOME/etc/Renviron.site
 echo "HTTR_PORT=$HTTR_PORT" >> $R_HOME/etc/Renviron.site
 
+# fake data folder
+mkdir -p /data/out/tables/
+mkdir -p /data/out/files/
+mkdir -p /data/in/tables/
+mkdir -p /data/in/files/
+
 # directory for fake r session data
 mkdir -p /data/.rstudio/sdb/per/t/
-chmod a+rwx -R /data/.rstudio/
 Rscript /tmp/rsession_init.R
+cp /tmp/pcs /data/.rstudio/pcs/
+
+chmod a+rwx -R /data/
