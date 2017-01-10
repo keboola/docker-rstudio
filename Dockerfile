@@ -48,6 +48,7 @@ COPY rserver.conf /etc/rstudio/
 COPY rsession.conf /etc/rstudio/
 COPY rsession_init.R /tmp
 COPY templatefile.json /tmp
+COPY wait-for-it.sh /tmp
 
 EXPOSE 8787
 
