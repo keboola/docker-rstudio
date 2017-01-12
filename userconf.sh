@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bash
+set -e
 
 # Environment variables must be provided
 if [ -z ${USER+x} ] || [ -z ${PASSWORD+x} ] ; then
