@@ -77,10 +77,13 @@ COPY rsession_init.R /tmp
 COPY templatefile.json /tmp
 COPY wait-for-it.sh /tmp
 COPY userconf.sh /tmp
+COPY init.R /tmp
 
 EXPOSE 8787
 
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1
+
+RUN R CMD javareconf && /usr/local/src/R/Rscript /tmp/init.R
 
 CMD ["/init"]
