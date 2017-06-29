@@ -12,3 +12,20 @@ configData$contents <- rscript
 jsonData <- jsonlite::toJSON(configData, auto_unbox = TRUE, pretty = TRUE)
 writeChar(jsonData, paste0('/data/.rstudio/sdb/per/t/AAAAAAA'))
 writeChar(rscript, '/data/main.R', eos = NULL)
+
+library('keboola.r.transformation')
+app <- RTransformation$new('/data/')
+
+packages <- Sys.getenv('PACKAGES')
+if (packages != "") {
+	print(paste0("Processing packages from:", packages))
+	app$packages <- jsonlite::fromJSON(packages)
+	app$installModulePackages()
+}
+
+tags <- Sys.getenv('TAGS')
+if (tags != "") {
+	print(paste0("Processing tagged files from:", tags))
+	app$tags <- jsonlite::fromJSON(tags)
+	app$prepareTaggedFiles()
+}
