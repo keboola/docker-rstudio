@@ -19,13 +19,13 @@ app <- RTransformation$new('/data/')
 packages <- Sys.getenv('PACKAGES')
 if (packages != "") {
 	print(paste0("Processing packages from:", packages))
-	app$packages <- jsonlite::fromJSON(packages)
+	app$packages <- as.character(jsonlite::fromJSON(packages))
 	app$installModulePackages()
 }
 
 tags <- Sys.getenv('TAGS')
 if (tags != "") {
 	print(paste0("Processing tagged files from:", tags))
-	app$tags <- jsonlite::fromJSON(tags)
+	app$tags <- as.character(jsonlite::fromJSON(tags))
 	app$prepareTaggedFiles()
 }
