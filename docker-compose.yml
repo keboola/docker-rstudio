@@ -6,6 +6,8 @@ services:
     build: .
     links:
       - data-loader
+    ports:
+      - "9999:8787"
     environment:
       USER: martin
       PASSWORD: test
