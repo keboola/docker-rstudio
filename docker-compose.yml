@@ -1,0 +1,23 @@
+version: "2"
+services:
+  data-loader:
+    image: php:7-apache
+  rstudio:
+    build: .
+    links:
+      - data-loader
+    ports:
+      - "9999:8787"
+    environment:
+      USER: martin
+      PASSWORD: test
+  proxy:
+    image: nginx:1.13
+    links:
+      - rstudio
+    ports:
+      - "6200:443"
+    volumes:
+      - ./nginx/proxy.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/ssl/x.keboola.com.crt:/etc/ssl/certs/nginx/proxy.crt
+      - ./nginx/ssl/x.keboola.com.key:/etc/ssl/certs/nginx/proxy.key
