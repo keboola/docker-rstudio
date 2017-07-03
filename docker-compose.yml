@@ -16,6 +16,8 @@ services:
     links:
       - rstudio
     ports:
-      - "6200:80"
+      - "6200:443"
     volumes:
       - ./nginx/proxy.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/ssl/x.keboola.com.crt:/etc/ssl/certs/nginx/proxy.crt
+      - ./nginx/ssl/x.keboola.com.key:/etc/ssl/certs/nginx/proxy.key
