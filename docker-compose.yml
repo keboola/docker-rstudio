@@ -1,0 +1,26 @@
+version: "2"
+
+services:
+  data-loader:
+    image: quay.io/keboola/data-loader
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./data:/data/
+    environment:
+      - KBC_EXPORT_CONFIG={"storage":{"input":{"files":[{"tags":["pokus"]}]}}}
+      - KBC_TOKEN
+  sandbox:
+    build: .
+    image: keboola/docker-rstudio
+    tty: true
+    stdin_open: true
+    volumes_from:
+      - data-loader
+    ports:
+      - 8787:8787
+    environment:
+      - USER=root2
+      - PASSWORD=root2
+      - PACKAGES=["stringr"]
+      - TAGS=["pokus2"]
