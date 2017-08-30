@@ -70,20 +70,18 @@ RUN apt-get update \
            \n rstudio-server stop' \
            > /etc/services.d/rstudio/finish
 
-COPY run.sh /etc/services.d/rstudio/run
-COPY rserver.conf /etc/rstudio/
-COPY rsession.conf /etc/rstudio/
-COPY rsession_init.R /tmp
-COPY templatefile.json /tmp
-COPY wait-for-it.sh /tmp
-COPY userconf.sh /tmp
-COPY init.R /tmp
+COPY cont-init.d/ /etc/cont-init.d
+COPY rstudio/ /etc/rstudio
+COPY code/ /code
 
 EXPOSE 8787
+
+# This is fucking important https://github.com/just-containers/s6-overlay#customizing-s6-behaviour
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS 2
 
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1
 
-RUN R CMD javareconf && /usr/local/src/R/Rscript /tmp/init.R
+RUN R CMD javareconf && /usr/local/src/R/Rscript /code/init.R
 
-CMD ["/init"]
+ENTRYPOINT ["/init"]
