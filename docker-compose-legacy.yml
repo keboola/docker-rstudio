@@ -23,4 +23,4 @@ services:
       - USER=root2
       - PASSWORD=root2
       - PACKAGES=["stringr"]
-      - TAGS=["pokus2"]
+      - TAGS=["pokus"]
