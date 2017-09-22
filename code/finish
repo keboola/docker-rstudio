@@ -1,0 +1,3 @@
+#!/bin/bash
+rstudio-server stop
+exit 123

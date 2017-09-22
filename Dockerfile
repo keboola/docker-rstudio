@@ -2,7 +2,7 @@ FROM quay.io/keboola/docker-base-r-packages:3.3.2-b
 # Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.3.2/Dockerfile
 
 ARG RSTUDIO_VERSION
-ARG PANDOC_TEMPLATES_VERSION 
+ARG PANDOC_TEMPLATES_VERSION
 ENV PANDOC_TEMPLATES_VERSION ${PANDOC_TEMPLATES_VERSION:-1.18}
 
 ## Add RStudio binaries to PATH
@@ -65,23 +65,24 @@ RUN apt-get update \
   && mkdir -p /etc/services.d/rstudio \
   && echo '#!/bin/bash \
            \n exec /usr/lib/rstudio-server/bin/rserver --server-daemonize 0' \
-           > /etc/services.d/rstudio/run \
-   && echo '#!/bin/bash \
-           \n rstudio-server stop' \
-           > /etc/services.d/rstudio/finish
-
-COPY cont-init.d/ /etc/cont-init.d
-COPY rstudio/ /etc/rstudio
-COPY code/ /code
+           > /etc/services.d/rstudio/run 
 
 EXPOSE 8787
 
 # This is fucking important https://github.com/just-containers/s6-overlay#customizing-s6-behaviour
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS 2
 
+# Set proper paths and install r-transformation library (generate the file on fly to avoid dependence on COPY)
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
-  && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1
+  && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
+  && printf "devtools::install_github('keboola/r-docker-application', ref = '1.0.2')\ndevtools::install_github('keboola/r-transformation', ref = '1.1.2')" > /tmp/init.R \
+  && R CMD javareconf \ 
+  && /usr/local/src/R/Rscript /tmp/init.R \
+  && rm /tmp/init.R
 
-RUN R CMD javareconf && /usr/local/src/R/Rscript /code/init.R
+COPY cont-init.d/ /etc/cont-init.d
+COPY rstudio/ /etc/rstudio
+COPY code/finish /etc/services.d/rstudio/
+COPY code/ /code
 
 ENTRYPOINT ["/init"]
