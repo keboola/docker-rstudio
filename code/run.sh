@@ -15,8 +15,9 @@ echo "$USER:$PASSWORD" | chpasswd
 
 # directory for fake r session data
 mkdir -p /data/.rstudio/sdb/per/t/
+chmod a+rwx -R /data/
 Rscript /code/rsession_init.R
-chmod a+rwx -R /data/main.R
+chmod a+rw /data/main.R
 
 /code/wait-for-it.sh -t 0 data-loader:80 -- echo "Data loader is up"
 
