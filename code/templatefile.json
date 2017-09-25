@@ -1,18 +1,17 @@
 {
     "collab_server" : "",
     "contents" : "test\n",
-    "created" : 1476892800388.000,
+    "created" : 1506360142904.000,
     "dirty" : true,
-    "encoding" : "",
+    "encoding" : "UTF-8",
     "folds" : "",
     "hash" : "1001993670",
     "id" : "AAAAAAA",
-    "lastKnownWriteTime" : 1476892948,
-    "last_content_update" : 1476892948800,
+    "lastKnownWriteTime" : 1506359692,
+    "last_content_update" : 1506359692,
     "path" : "/data/main.R",
     "project_path" : null,
     "properties" : {
-        "tempName" : "Transformation Code"
     },
     "relative_order" : 1,
     "source_on_save" : false,
