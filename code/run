@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Starting"
+echo 21 > /var/run/s6/env-stage3/S6_CMD_EXITED
+exec /usr/lib/rstudio-server/bin/rserver --server-daemonize 0

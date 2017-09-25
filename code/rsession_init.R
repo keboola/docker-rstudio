@@ -1,9 +1,12 @@
 
 rscript <- Sys.getenv('SCRIPT')
-user <- Sys.getenv('USER')
 # because EOS is null, rscript mustn't be empty
 if (nchar(rscript) == 0) {
-    rscript = ' '
+	if (file.exists('/data/main.R')) {
+		rscript = readChar('/data/main.R', file.info('/data/main.R')$size)
+	} else {
+		rscript = ' '
+	}
 }
 fileName <- '/code/templatefile.json'
 data <- readChar(fileName, file.info(fileName)$size)
@@ -12,6 +15,7 @@ configData$contents <- rscript
 jsonData <- jsonlite::toJSON(configData, auto_unbox = TRUE, pretty = TRUE)
 writeChar(jsonData, paste0('/data/.rstudio/sdb/per/t/AAAAAAA'))
 writeChar(rscript, '/data/main.R', eos = NULL)
+
 
 library('keboola.r.transformation')
 app <- RTransformation$new('/data/')

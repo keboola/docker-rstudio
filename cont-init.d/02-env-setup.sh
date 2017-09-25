@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/bin/bash
 set -e
 
 ## add these to the global environment so they are avialable to the RStudio user 
@@ -7,6 +7,6 @@ echo "HTTR_PORT=$HTTR_PORT" >> $R_HOME/etc/Renviron.site
 
 # directory for fake r session data
 mkdir -p /data/.rstudio/sdb/per/t/
+#exit 123
 Rscript /code/rsession_init.R
-
 chmod a+rwx -R /data/

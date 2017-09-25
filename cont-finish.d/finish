@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "Finishing"
+#cat /var/run/s6/env-stage3
+echo "Finished"
+ls -la /var/run/s6/env-stage3
+#echo 24 > /var/run/s6/env-stage3/S6_CMD_EXITED
+exit 123

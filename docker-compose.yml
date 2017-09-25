@@ -9,7 +9,7 @@ services:
       - ./data:/data/
     environment:
       - KBC_CONFIG_ID=319068939
-      - KBC_ROW_ID=319068990
+      - KBC_ROW_ID=319127596
       - KBC_ROW_VERSION=4
       - KBC_TOKEN
   sandbox:
@@ -19,10 +19,12 @@ services:
     stdin_open: true
     volumes_from:
       - data-loader
+    volumes:
+      - ./s6:/var/run/s6/env-stage3
     ports:
       - 8787:8787
     environment:
-      - USER=root2
-      - PASSWORD=root2
+      - USER=test
+      - PASSWORD=test
       - PACKAGES=["stringr"]
       - TAGS=["cat"]
