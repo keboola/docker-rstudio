@@ -13,7 +13,7 @@ tryCatch({
 	configData <- jsonlite::fromJSON(data)
 	configData$contents <- rscript
 	jsonData <- jsonlite::toJSON(configData, auto_unbox = TRUE, pretty = TRUE)
-	writeChar(jsonData, paste0('/data/.rstudio/sdb/per/t/AAAAAAA'))
+	writeChar(jsonData, paste0('/data/.rstudio/sdb/per/t/AAAAAAA'), eos = NULL)
 	writeChar(rscript, '/data/main.R', eos = NULL)
 }, error = function(e) {
 	print("Failed to load script.")
