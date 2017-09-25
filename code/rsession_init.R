@@ -1,21 +1,24 @@
-
-rscript <- Sys.getenv('SCRIPT')
-# because EOS is null, rscript mustn't be empty
-if (nchar(rscript) == 0) {
-	if (file.exists('/data/main.R')) {
-		rscript = readChar('/data/main.R', file.info('/data/main.R')$size)
-	} else {
-		rscript = ' '
+tryCatch({
+	rscript <- Sys.getenv('SCRIPT')
+	# because EOS is null, rscript mustn't be empty
+	if (nchar(rscript) == 0) {
+		if (file.exists('/data/main.R')) {
+			rscript = readChar('/data/main.R', file.info('/data/main.R')$size)
+		} else {
+			rscript = ' '
+		}
 	}
-}
-fileName <- '/code/templatefile.json'
-data <- readChar(fileName, file.info(fileName)$size)
-configData <- jsonlite::fromJSON(data)
-configData$contents <- rscript
-jsonData <- jsonlite::toJSON(configData, auto_unbox = TRUE, pretty = TRUE)
-writeChar(jsonData, paste0('/data/.rstudio/sdb/per/t/AAAAAAA'))
-writeChar(rscript, '/data/main.R', eos = NULL)
-
+	fileName <- '/code/templatefile.json'
+	data <- readChar(fileName, file.info(fileName)$size)
+	configData <- jsonlite::fromJSON(data)
+	configData$contents <- rscript
+	jsonData <- jsonlite::toJSON(configData, auto_unbox = TRUE, pretty = TRUE)
+	writeChar(jsonData, paste0('/data/.rstudio/sdb/per/t/AAAAAAA'))
+	writeChar(rscript, '/data/main.R', eos = NULL)
+}, error = function(e) {
+	print("Failed to load script.")
+	quit(121)
+})
 
 library('keboola.r.transformation')
 app <- RTransformation$new('/data/')
@@ -27,8 +30,14 @@ if (packages != "") {
 		as.character(jsonlite::fromJSON(packages))
 	}, error = function(e) {
 		print(paste0("Packages is not a JSON array ", packages))
+		quit(save = 'no', status = 122, runLast = FALSE)
 	})
-	app$installModulePackages()
+	tryCatch({
+		app$installModulePackages()
+	}, error = function(e) {
+		print(paste0("Faield to install packages ", e))
+		quit(save = 'no', status = 123, runLast = FALSE)
+	})
 }
 
 tags <- Sys.getenv('TAGS')
@@ -38,6 +47,12 @@ if (tags != "") {
 		as.character(jsonlite::fromJSON(tags))
 	}, error = function(e) {
 		print(paste0("Tags is not a JSON array ", tags))
+		quit(save = 'no', status = 124, runLast = FALSE)
 	})
-	app$prepareTaggedFiles()
+	tryCatch({
+		app$prepareTaggedFiles()
+	}, error = function(e) {
+		print(paste0("Failed to prepare files ", e))
+		quit(save = 'no', status = 125, runLast = FALSE)
+	})
 }

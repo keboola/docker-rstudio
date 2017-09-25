@@ -1,11 +1,23 @@
 #!/bin/bash
 set -e
 
-echo "Running"
-/etc/cont-init.d/01-user-conf.sh
-echo "Running 2"
-/etc/cont-init.d/02-env-setup.sh
-echo "Running 3"
-/etc/cont-init.d/03-data-loader-wait.sh
-echo "Running 4"
+# Environment variables must be provided
+if [ -z ${USER} ] || [ -z ${PASSWORD} ] ; then
+	echo "USER and PASSWORD must be provided"
+	exit 2
+fi
+
+useradd $USER
+usermod -a -G root $USER
+# set home directory
+usermod -d /data/ $USER
+echo "$USER:$PASSWORD" | chpasswd
+
+# directory for fake r session data
+mkdir -p /data/.rstudio/sdb/per/t/
+chmod a+rwx -R /data/
+Rscript /code/rsession_init.R
+
+/code/wait-for-it.sh -t 0 data-loader:80 -- echo "Data loader is up"
+
 exec /usr/lib/rstudio-server/bin/rserver --server-daemonize 0

@@ -1,5 +1,0 @@
-#!/bin/bash
-echo "Terminating"
-rstudio-server stop
-echo "Terminated"
-exit 123

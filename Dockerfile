@@ -59,37 +59,28 @@ RUN apt-get update \
   ## configure git not to request password each time 
   && git config --system credential.helper 'cache --timeout=3600' \
   && git config --system push.default simple \
-  ## Set up S6 init system
-  && wget -P /tmp/ https://github.com/just-containers/s6-overlay/releases/download/v1.11.0.1/s6-overlay-amd64.tar.gz \
-  && tar xzf /tmp/s6-overlay-amd64.tar.gz -C / \
-  && mkdir -p /etc/services.d/rstudio 
-
-EXPOSE 8787
-
-# This is fucking important https://github.com/just-containers/s6-overlay#customizing-s6-behaviour
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS 2
-
-# Set proper paths and install r-transformation library (generate the file on fly to avoid dependence on COPY)
-RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
-  && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
-  && printf "devtools::install_github('keboola/r-docker-application', ref = '1.0.2')\ndevtools::install_github('keboola/r-transformation', ref = '1.1.2')" > /tmp/init.R \
-  && R CMD javareconf \ 
-  && /usr/local/src/R/Rscript /tmp/init.R \
-  && rm /tmp/init.R
-
-COPY cont-init.d/ /etc/cont-init.d
-COPY cont-finish.d/ /etc/cont-finish.d
-COPY rstudio/ /etc/rstudio
-COPY code/finish /etc/services.d/rstudio/
-COPY code/run /etc/services.d/rstudio/
-COPY code/ /code
+  ## Create a group for the RStudioServer and grant access to $R_HOME/etc/
+  && groupadd rserver \
+  && chgrp rserver -R $R_HOME/etc/
 
 ENV TINI_VERSION v0.16.1
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
-ENTRYPOINT ["/tini", "--"]
 
+# Set proper paths and install r-transformation library (generate the install file on fly to avoid dependence on COPY)
+RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
+  && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
+  && printf "devtools::install_github('keboola/r-docker-application', ref = '1.0.2')\n" > /tmp/init.R \
+  && printf "devtools::install_github('keboola/r-transformation', ref = '1.1.2')\n" >> /tmp/init.R \
+  && printf "install.packages('readr')\n" >> /tmp/init.R \
+  && R CMD javareconf \ 
+  && /usr/local/src/R/Rscript /tmp/init.R \
+  && rm /tmp/init.R
+
+COPY rstudio/ /etc/rstudio
+COPY code/ /code
+
+EXPOSE 8787
+
+ENTRYPOINT ["/tini", "--"]
 CMD ["/code/run.sh"]
-#ENTRYPOINT ["/code/run.sh"]
-#ENTRYPOINT ["/init"]
-#CMD ["exec", "/usr/lib/rstudio-server/bin/rserver", "--server-daemonize", "0"]
