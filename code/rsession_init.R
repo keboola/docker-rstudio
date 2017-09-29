@@ -17,7 +17,7 @@ tryCatch({
 	writeChar(rscript, '/data/main.R', eos = NULL)
 }, error = function(e) {
 	print("Failed to load script.")
-	quit(121)
+	quit(151)
 })
 
 library('keboola.r.transformation')
@@ -30,13 +30,13 @@ if (packages != "") {
 		as.character(jsonlite::fromJSON(packages))
 	}, error = function(e) {
 		print(paste0("Packages is not a JSON array ", packages))
-		quit(save = 'no', status = 122, runLast = FALSE)
+		quit(save = 'no', status = 152, runLast = FALSE)
 	})
 	tryCatch({
 		app$installModulePackages()
 	}, error = function(e) {
 		print(paste0("Faield to install packages ", e))
-		quit(save = 'no', status = 123, runLast = FALSE)
+		quit(save = 'no', status = 153, runLast = FALSE)
 	})
 }
 
@@ -47,12 +47,12 @@ if (tags != "") {
 		as.character(jsonlite::fromJSON(tags))
 	}, error = function(e) {
 		print(paste0("Tags is not a JSON array ", tags))
-		quit(save = 'no', status = 124, runLast = FALSE)
+		quit(save = 'no', status = 154, runLast = FALSE)
 	})
 	tryCatch({
 		app$prepareTaggedFiles()
 	}, error = function(e) {
 		print(paste0("Failed to prepare files ", e))
-		quit(save = 'no', status = 125, runLast = FALSE)
+		quit(save = 'no', status = 155, runLast = FALSE)
 	})
 }
