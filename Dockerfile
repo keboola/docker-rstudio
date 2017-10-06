@@ -1,4 +1,4 @@
-FROM quay.io/keboola/docker-base-r-packages:3.3.2-b
+FROM quay.io/keboola/docker-custom-r:1.5.0
 # Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.3.2/Dockerfile
 
 ARG RSTUDIO_VERSION
@@ -64,6 +64,7 @@ RUN apt-get update \
   && chgrp rserver -R $R_HOME/etc/
 
 ENV TINI_VERSION v0.16.1
+ENV R_HOME /usr/local/lib/R/
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
@@ -74,7 +75,7 @@ RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && printf "devtools::install_github('keboola/r-transformation', ref = '1.1.2')\n" >> /tmp/init.R \
   && printf "install.packages('readr')\n" >> /tmp/init.R \
   && R CMD javareconf \ 
-  && /usr/local/src/R/Rscript /tmp/init.R \
+  && /usr/local/lib/R/bin/Rscript /tmp/init.R \
   && rm /tmp/init.R
 
 COPY rstudio/ /etc/rstudio
