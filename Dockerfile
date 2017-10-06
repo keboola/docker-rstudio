@@ -14,17 +14,19 @@ ENV PATH /usr/lib/rstudio-server/bin:$PATH
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     file \
-    git \
     libapparmor1 \
     libcurl4-openssl-dev \
     libedit2 \
     libssl-dev \
-    lsb-release \
+    lsb-release \ 
     psmisc \
     python-setuptools \
     sudo \
     wget \
-  && RSTUDIO_LATEST=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
+  && wget -O libssl1.0.0.deb http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb \
+  && dpkg -i libssl1.0.0.deb \
+  && rm libssl1.0.0.deb \    
+ && RSTUDIO_LATEST=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
   && [ -z "$RSTUDIO_VERSION" ] && RSTUDIO_VERSION=$RSTUDIO_LATEST || true \
   && wget -q http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
   && dpkg -i rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
@@ -36,8 +38,8 @@ RUN apt-get update \
   && mkdir -p /opt/pandoc/templates && tar zxf ${PANDOC_TEMPLATES_VERSION}.tar.gz \
   && cp -r pandoc-templates*/* /opt/pandoc/templates && rm -rf pandoc-templates* \
   && mkdir /root/.pandoc && ln -s /opt/pandoc/templates /root/.pandoc/templates \
+  && rm ${PANDOC_TEMPLATES_VERSION}.tar.gz \
   && apt-get clean \
-  && mkdir -p /usr/local/lib/R/etc/ \
   && rm -rf /var/lib/apt/lists/ \
   ## RStudio wants an /etc/R, will populate from $R_HOME/etc
   && mkdir -p /etc/R \
@@ -49,13 +51,17 @@ RUN apt-get update \
     \nif(is.na(Sys.getenv("HTTR_LOCALHOST", unset=NA))) { \
     \n  options(httr_oob_default = TRUE) \
     \n}' >> /usr/local/lib/R/etc/Rprofile.site \
-  && echo "PATH=\"${PATH}\"" >> /usr/local/lib/R/etc/Renviron \
+  && echo "PATH=${PATH}" >> /usr/local/lib/R/etc/Renviron \
   ## Need to configure non-root user for RStudio
   && useradd rstudio \
   && echo "rstudio:rstudio" | chpasswd \
   && mkdir /home/rstudio \
   && chown rstudio:rstudio /home/rstudio \
   && addgroup rstudio staff \
+  ## Prevent rstudio from deciding to use /usr/bin/R if a user apt-get installs a package
+  &&  echo 'rsession-which-r=/usr/local/bin/R' >> /etc/rstudio/rserver.conf \ 
+  ## use more robust file locking to avoid errors when using shared volumes:
+  && echo 'lock-type=advisory' >> /etc/rstudio/file-locks \
   ## configure git not to request password each time 
   && git config --system credential.helper 'cache --timeout=3600' \
   && git config --system push.default simple \
