@@ -1,4 +1,12 @@
 #!/bin/bash
+set -e
+
+docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
+docker tag keboola/docker-rstudio quay.io/keboola/docker-rstudio:${TRAVIS_TAG}
+docker tag keboola/docker-rstudio quay.io/keboola/docker-rstudio:latest
+docker images
+docker push quay.io/keboola/docker-rstudio:${TRAVIS_TAG}
+docker push quay.io/keboola/docker-rstudio:latest
 
 # install aws cli w/o sudo
 pip install --user awscli
