@@ -81,7 +81,7 @@ RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && R CMD javareconf \ 
   && /usr/local/lib/R/bin/Rscript /tmp/init.R \
   && rm /tmp/init.R \
-  && chmod a+wx /usr/local/lib/R/site-library
+  && chmod -R a+wx /usr/local/lib/R/site-library
 
 COPY rstudio/ /etc/rstudio
 COPY code/ /code
