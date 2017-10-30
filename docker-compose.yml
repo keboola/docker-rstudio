@@ -10,7 +10,7 @@ services:
     environment:
       - KBC_CONFIG_ID=319068939
       - KBC_ROW_ID=319127596
-      - KBC_ROW_VERSION=4
+      - KBC_CONFIG_VERSION=76
       - KBC_TOKEN
   sandbox:
     build: .

@@ -70,19 +70,18 @@ RUN apt-get update \
   && chgrp rserver -R $R_HOME/etc/
 
 ENV TINI_VERSION v0.16.1
-ENV R_HOME /usr/local/lib/R/
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
 # Set proper paths and install r-transformation library (generate the install file on fly to avoid dependence on COPY)
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
-  && printf "devtools::install_github('keboola/r-docker-application', ref = '1.0.2')\n" > /tmp/init.R \
   && printf "devtools::install_github('keboola/r-transformation', ref = '1.1.2')\n" >> /tmp/init.R \
   && printf "install.packages('readr')\n" >> /tmp/init.R \
   && R CMD javareconf \ 
   && /usr/local/lib/R/bin/Rscript /tmp/init.R \
-  && rm /tmp/init.R
+  && rm /tmp/init.R \
+  && chmod a+wx /usr/local/lib/R/site-library
 
 COPY rstudio/ /etc/rstudio
 COPY code/ /code
