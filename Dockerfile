@@ -23,10 +23,10 @@ RUN apt-get update \
     python-setuptools \
     sudo \
     wget \
-  && wget -O libssl1.0.0.deb http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb \
+  && wget -O libssl1.0.0.deb http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u7_amd64.deb \
   && dpkg -i libssl1.0.0.deb \
-  && rm libssl1.0.0.deb \    
- && RSTUDIO_LATEST=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
+  && rm libssl1.0.0.deb \
+  && RSTUDIO_LATEST=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
   && [ -z "$RSTUDIO_VERSION" ] && RSTUDIO_VERSION=$RSTUDIO_LATEST || true \
   && wget -q http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
   && dpkg -i rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
@@ -34,11 +34,10 @@ RUN apt-get update \
   ## Symlink pandoc & standard pandoc templates for use system-wide
   && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc /usr/local/bin \
   && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc /usr/local/bin \
-  && wget https://github.com/jgm/pandoc-templates/archive/${PANDOC_TEMPLATES_VERSION}.tar.gz \
-  && mkdir -p /opt/pandoc/templates && tar zxf ${PANDOC_TEMPLATES_VERSION}.tar.gz \
+  && git clone https://github.com/jgm/pandoc-templates \
+  && mkdir -p /opt/pandoc/templates \
   && cp -r pandoc-templates*/* /opt/pandoc/templates && rm -rf pandoc-templates* \
   && mkdir /root/.pandoc && ln -s /opt/pandoc/templates /root/.pandoc/templates \
-  && rm ${PANDOC_TEMPLATES_VERSION}.tar.gz \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/ \
   ## RStudio wants an /etc/R, will populate from $R_HOME/etc
