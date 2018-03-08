@@ -75,7 +75,7 @@ RUN chmod +x /tini
 # Set proper paths and install r-transformation library (generate the install file on fly to avoid dependence on COPY)
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
-  && printf "devtools::install_github('keboola/r-transformation', ref = '1.1.2')\n" >> /tmp/init.R \
+  && printf "devtools::install_github('keboola/r-transformation', ref = '1.2.8')\n" >> /tmp/init.R \
   && printf "install.packages('readr')\n" >> /tmp/init.R \
   && R CMD javareconf \ 
   && /usr/local/lib/R/bin/Rscript /tmp/init.R \
