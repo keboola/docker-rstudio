@@ -1,4 +1,4 @@
-FROM quay.io/keboola/docker-custom-r:1.6.0
+FROM quay.io/keboola/docker-custom-r:1.7.0
 # Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.3.2/Dockerfile
 
 ARG RSTUDIO_VERSION
