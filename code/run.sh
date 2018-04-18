@@ -15,6 +15,7 @@ echo "$USER:$PASSWORD" | chpasswd
 
 # directory for fake r session data
 mkdir -p /data/.rstudio/sdb/per/t/
+chmod a+rwx -R /tmp/
 chmod a+rwx -R /data/
 Rscript /tmp-rstudio/rsession_init.R
 chmod a+rw /data/main.R
