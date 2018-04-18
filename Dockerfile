@@ -5,6 +5,8 @@ ARG RSTUDIO_VERSION
 ARG PANDOC_TEMPLATES_VERSION
 ENV PANDOC_TEMPLATES_VERSION ${PANDOC_TEMPLATES_VERSION:-1.18}
 
+WORKDIR /tmp-rstudio/
+
 ## Add RStudio binaries to PATH
 ENV PATH /usr/lib/rstudio-server/bin:$PATH
 
@@ -75,17 +77,17 @@ RUN chmod +x /tini
 # Set proper paths and install r-transformation library (generate the install file on fly to avoid dependence on COPY)
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
-  && printf "devtools::install_github('keboola/r-transformation', ref = '1.2.8')\n" >> /tmp/init.R \
-  && printf "install.packages('readr')\n" >> /tmp/init.R \
+  && printf "devtools::install_github('keboola/r-transformation', ref = '1.2.8')\n" >> /tmp-rstudio/init.R \
+  && printf "install.packages('readr')\n" >> /tmp-rstudio/init.R \
   && R CMD javareconf \ 
-  && /usr/local/lib/R/bin/Rscript /tmp/init.R \
-  && rm /tmp/init.R \
+  && /usr/local/lib/R/bin/Rscript /tmp-rstudio/init.R \
+  && rm /tmp-rstudio/init.R \
   && chmod -R a+wx /usr/local/lib/R/site-library
 
 COPY rstudio/ /etc/rstudio
-COPY code/ /code
+COPY code/ /tmp-rstudio/
 
 EXPOSE 8787
 
 ENTRYPOINT ["/tini", "--"]
-CMD ["/code/run.sh"]
+CMD ["/tmp-rstudio/run.sh"]

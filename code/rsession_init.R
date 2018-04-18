@@ -8,7 +8,7 @@ tryCatch({
             rscript = ' '
         }
     }
-    fileName <- '/code/templatefile.json'
+    fileName <- '/tmp-rstudio/templatefile.json'
     data <- readChar(fileName, file.info(fileName)$size)
     configData <- jsonlite::fromJSON(data)
     configData$contents <- rscript
