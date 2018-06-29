@@ -1,4 +1,4 @@
-FROM quay.io/keboola/docker-custom-r:1.7.0
+FROM quay.io/keboola/docker-custom-r:1.8.0
 # Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.3.2/Dockerfile
 
 ARG RSTUDIO_VERSION
@@ -25,6 +25,9 @@ RUN apt-get update \
     python-setuptools \
     sudo \
     wget \
+  && wget -O libssl1.0.0.deb http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u8_amd64.deb \
+  && dpkg -i libssl1.0.0.deb \	
+  && rm libssl1.0.0.deb \    
   && RSTUDIO_LATEST=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
   && [ -z "$RSTUDIO_VERSION" ] && RSTUDIO_VERSION=$RSTUDIO_LATEST || true \
   && wget -q http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
