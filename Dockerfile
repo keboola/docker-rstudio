@@ -4,6 +4,7 @@ FROM quay.io/keboola/docker-custom-r:1.8.1
 ARG RSTUDIO_VERSION
 ARG PANDOC_TEMPLATES_VERSION
 ENV PANDOC_TEMPLATES_VERSION ${PANDOC_TEMPLATES_VERSION:-1.18}
+ARG GITHUB_PAT
 
 WORKDIR /tmp-rstudio/
 
@@ -80,9 +81,11 @@ RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && printf "devtools::install_github('keboola/r-transformation', ref = '1.2.8')\n" >> /tmp-rstudio/init.R \
   && printf "install.packages('readr')\n" >> /tmp-rstudio/init.R \
   && R CMD javareconf \ 
+  && printf "GITHUB_PAT=$GITHUB_PAT\n" > .Renviron \
   && /usr/local/lib/R/bin/Rscript /tmp-rstudio/init.R \
   && rm /tmp-rstudio/init.R \
-  && chmod -R a+wx /usr/local/lib/R/site-library
+  && chmod -R a+wx /usr/local/lib/R/site-library \
+  && rm -f .Renviron
 
 COPY rstudio/ /etc/rstudio
 COPY code/ /tmp-rstudio/
