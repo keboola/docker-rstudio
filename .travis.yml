@@ -3,7 +3,7 @@ language: bash
 services:
 - docker
 script:
-- docker build -t keboola/docker-rstudio .
+- docker build --build-arg GITHUB_PAT -t keboola/docker-rstudio .
 after_success:
 - docker images
 deploy:
