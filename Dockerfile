@@ -1,10 +1,10 @@
-FROM quay.io/keboola/docker-custom-r:1.8.2
-# Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.3.2/Dockerfile
+FROM quay.io/keboola/docker-custom-r:1.9.1
+# Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.5.2/Dockerfile
 
 ARG RSTUDIO_VERSION
+ENV RSTUDIO_VERSION=${RSTUDIO_VERSION:-1.1.463}
 ARG PANDOC_TEMPLATES_VERSION
-ENV PANDOC_TEMPLATES_VERSION ${PANDOC_TEMPLATES_VERSION:-1.18}
-ARG GITHUB_PAT
+ENV PANDOC_TEMPLATES_VERSION=${PANDOC_TEMPLATES_VERSION:-2.6}
 
 WORKDIR /tmp-rstudio/
 
@@ -16,19 +16,22 @@ ENV PATH /usr/lib/rstudio-server/bin:$PATH
 ## Symlink pandoc, pandoc-citeproc so they are available system-wide
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
+    apt-utils \
+    dialog \
     file \
     libapparmor1 \
     libcurl4-openssl-dev \
     libedit2 \
     libssl-dev \
-    lsb-release \ 
+    lsb-release \
     psmisc \
+    procps \
     python-setuptools \
     sudo \
     wget \
   && wget -O libssl1.0.0.deb http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u8_amd64.deb \
-  && dpkg -i libssl1.0.0.deb \	
-  && rm libssl1.0.0.deb \    
+  && dpkg -i libssl1.0.0.deb \
+  && rm libssl1.0.0.deb \
   && RSTUDIO_LATEST=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
   && [ -z "$RSTUDIO_VERSION" ] && RSTUDIO_VERSION=$RSTUDIO_LATEST || true \
   && wget -q http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
@@ -37,7 +40,7 @@ RUN apt-get update \
   ## Symlink pandoc & standard pandoc templates for use system-wide
   && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc /usr/local/bin \
   && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc /usr/local/bin \
-  && git clone https://github.com/jgm/pandoc-templates \
+  && git clone --recursive --branch ${PANDOC_TEMPLATES_VERSION} https://github.com/jgm/pandoc-templates \
   && mkdir -p /opt/pandoc/templates \
   && cp -r pandoc-templates*/* /opt/pandoc/templates && rm -rf pandoc-templates* \
   && mkdir /root/.pandoc && ln -s /opt/pandoc/templates /root/.pandoc/templates \
@@ -61,10 +64,10 @@ RUN apt-get update \
   && chown rstudio:rstudio /home/rstudio \
   && addgroup rstudio staff \
   ## Prevent rstudio from deciding to use /usr/bin/R if a user apt-get installs a package
-  &&  echo 'rsession-which-r=/usr/local/bin/R' >> /etc/rstudio/rserver.conf \ 
+  &&  echo 'rsession-which-r=/usr/local/bin/R' >> /etc/rstudio/rserver.conf \
   ## use more robust file locking to avoid errors when using shared volumes:
   && echo 'lock-type=advisory' >> /etc/rstudio/file-locks \
-  ## configure git not to request password each time 
+  ## configure git not to request password each time
   && git config --system credential.helper 'cache --timeout=3600' \
   && git config --system push.default simple \
   ## Create a group for the RStudioServer and grant access to $R_HOME/etc/
@@ -78,7 +81,7 @@ RUN chmod +x /tini
 # Set proper paths and install r-transformation library (generate the install file on fly to avoid dependence on COPY)
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
-  && printf "devtools::install_github('keboola/r-transformation', ref = '1.2.8')\n" >> /tmp-rstudio/init.R \
+  && printf "devtools::install_github('keboola/r-transformation', ref = '1.2.11')\n" >> /tmp-rstudio/init.R \
   && printf "install.packages('readr')\n" >> /tmp-rstudio/init.R \
   && R CMD javareconf \ 
   && printf "GITHUB_PAT=$GITHUB_PAT\n" > .Renviron \
