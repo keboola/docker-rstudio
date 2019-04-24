@@ -1,12 +1,8 @@
 tryCatch({
-    rscript <- Sys.getenv('SCRIPT')
-    # because EOS is null, rscript mustn't be empty
-    if (nchar(rscript) == 0) {
-        if (file.exists('/data/main.R')) {
-            rscript = readChar('/data/main.R', file.info('/data/main.R')$size)
-        } else {
-            rscript = ' '
-        }
+    if (file.exists('/data/main.R')) {
+        rscript = readChar('/data/main.R', file.info('/data/main.R')$size)
+    } else {
+        rscript = ''
     }
     fileName <- '/tmp-rstudio/templatefile.json'
     data <- readChar(fileName, file.info(fileName)$size)
@@ -14,7 +10,6 @@ tryCatch({
     configData$contents <- rscript
     jsonData <- jsonlite::toJSON(configData, auto_unbox = TRUE, pretty = TRUE)
     writeChar(jsonData, paste0('/data/.rstudio/sdb/per/t/AAAAAAA'), eos = NULL)
-    writeChar(rscript, '/data/main.R', eos = NULL)
 }, error = function(e) {
     print("Failed to load script.")
     quit(151)
