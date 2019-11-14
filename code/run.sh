@@ -8,7 +8,8 @@ if [ -z ${USER} ] || [ -z ${PASSWORD} ] ; then
 fi
 
 useradd $USER
-usermod -a -G root $USER
+# add user to the users group (GID 100)
+usermod -a -G users $USER
 # set home directory
 usermod -d /data/ $USER
 echo "$USER:$PASSWORD" | chpasswd
