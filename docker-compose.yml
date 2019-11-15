@@ -12,6 +12,7 @@ services:
       - KBC_ROW_ID
       - KBC_CONFIG_VERSION
       - KBC_TOKEN
+      - KBC_STORAGEAPI_URL
   sandbox:
     build: .
     image: keboola/docker-rstudio
@@ -27,4 +28,4 @@ services:
       - USER=test
       - PASSWORD=test
       - PACKAGES=["stringr"]
-      - TAGS=["cat"]
+      - TAGS=[]

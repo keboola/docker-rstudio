@@ -8,7 +8,8 @@ if [ -z ${USER} ] || [ -z ${PASSWORD} ] ; then
 fi
 
 useradd $USER
-usermod -a -G root $USER
+# add user to the users group (GID 100)
+usermod -a -G users $USER
 # set home directory
 usermod -d /data/ $USER
 echo "$USER:$PASSWORD" | chpasswd
@@ -21,6 +22,7 @@ Rscript /tmp-rstudio/rsession_init.R
 chmod a+rw /data/main.R
 chown -R $USER /data/.rstudio
 chown $USER /data/main.R
+chgrp -R users /data
 
 /tmp-rstudio/wait-for-it.sh -t 0 data-loader:80 -- echo "Data loader is up"
 

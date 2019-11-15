@@ -1,4 +1,4 @@
-FROM quay.io/keboola/docker-custom-r:1.9.2
+FROM quay.io/keboola/docker-custom-r:1.9.3
 # Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.5.2/Dockerfile
 
 ARG RSTUDIO_VERSION
@@ -37,13 +37,6 @@ RUN apt-get update \
   && wget -q http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
   && dpkg -i rstudio-server-${RSTUDIO_VERSION}-amd64.deb \
   && rm rstudio-server-*-amd64.deb \
-  ## Symlink pandoc & standard pandoc templates for use system-wide
-  && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc /usr/local/bin \
-  && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc /usr/local/bin \
-  && git clone --recursive --branch ${PANDOC_TEMPLATES_VERSION} https://github.com/jgm/pandoc-templates \
-  && mkdir -p /opt/pandoc/templates \
-  && cp -r pandoc-templates*/* /opt/pandoc/templates && rm -rf pandoc-templates* \
-  && mkdir /root/.pandoc && ln -s /opt/pandoc/templates /root/.pandoc/templates \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/ \
   ## RStudio wants an /etc/R, will populate from $R_HOME/etc
@@ -57,13 +50,6 @@ RUN apt-get update \
     \n  options(httr_oob_default = TRUE) \
     \n}' >> /usr/local/lib/R/etc/Rprofile.site \
   && echo "PATH=${PATH}" >> /usr/local/lib/R/etc/Renviron \
-  ## Need to configure non-root user for RStudio
-  && useradd rstudio \
-  && echo "rstudio:rstudio" | chpasswd \
-  && mkdir /home/rstudio \
-  && chown rstudio:rstudio /home/rstudio \
-  && addgroup rstudio staff \
-  ## Prevent rstudio from deciding to use /usr/bin/R if a user apt-get installs a package
   &&  echo 'rsession-which-r=/usr/local/bin/R' >> /etc/rstudio/rserver.conf \
   ## use more robust file locking to avoid errors when using shared volumes:
   && echo 'lock-type=advisory' >> /etc/rstudio/file-locks \
