@@ -7,6 +7,8 @@ if [ -z ${USER} ] || [ -z ${PASSWORD} ] ; then
 	exit 2
 fi
 
+/tmp-rstudio/wait-for-it.sh -t 0 data-loader:80 -- echo "Data loader is up"
+
 useradd $USER
 # add user to the users group (GID 100)
 usermod -a -G users $USER
@@ -23,7 +25,5 @@ chmod a+rw /data/main.R
 chown -R $USER /data/.rstudio
 chown $USER /data/main.R
 chgrp -R users /data
-
-/tmp-rstudio/wait-for-it.sh -t 0 data-loader:80 -- echo "Data loader is up"
 
 exec /usr/lib/rstudio-server/bin/rserver --server-daemonize 0
