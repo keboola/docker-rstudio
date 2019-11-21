@@ -24,9 +24,9 @@ chmod a+rwx -R /tmp/
 chmod a+rwx -R /data/
 Rscript /tmp-rstudio/rsession_init.R
 echo "rsession initted"
-chmod a+rw /data/main.R
+chmod a+rwx -R /data
+chown -R $USER /data
 chown -R $USER /data/.rstudio
-chown $USER /data/main.R
 chgrp -R users /data
 
 echo "starting rserver"
