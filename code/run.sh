@@ -22,9 +22,8 @@ chmod a+rw /data/main.R
 chown -R $USER /data/.rstudio
 chown $USER /data/main.R
 chgrp -R users /data
+Rscript /tmp-rstudio/rsession_init.R
 
 /tmp-rstudio/wait-for-it.sh -t 0 data-loader:80 -- echo "Data loader is up"
-
-Rscript /tmp-rstudio/rsession_init.R
 
 exec /usr/lib/rstudio-server/bin/rserver --server-daemonize 0

@@ -1,5 +1,6 @@
 tryCatch({
     if (file.exists('/data/main.R')) {
+        print("Reading main.R")
         rscript = readChar('/data/main.R', file.info('/data/main.R')$size)
     } else {
         rscript = ''
@@ -16,11 +17,12 @@ tryCatch({
 })
 
 library('keboola.r.transformation')
+print("creating R RTransformation")
 app <- RTransformation$new('/data')
 
 packages <- Sys.getenv('PACKAGES')
-if (packages != "") {
-    print(paste0("Processing packages from:", packages))
+print(paste0("Processing packages from:", packages))
+if (packages != "" && packages != "[]") {
     app$packages <- tryCatch({
         as.character(jsonlite::fromJSON(packages))
     }, error = function(e) {
@@ -34,10 +36,9 @@ if (packages != "") {
         quit(save = 'no', status = 153, runLast = FALSE)
     })
 }
-
 tags <- Sys.getenv('TAGS')
-if (tags != "") {
-    print(paste0("Processing tagged files from:", tags))
+print(paste0("Processing tagged files from:", tags))
+if (tags != "" && tags != "[]") {
     app$tags <- tryCatch({
         as.character(jsonlite::fromJSON(tags))
     }, error = function(e) {
