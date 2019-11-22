@@ -17,7 +17,6 @@ tryCatch({
 })
 
 library('keboola.r.transformation')
-print("creating R RTransformation")
 app <- RTransformation$new('/data')
 
 packages <- Sys.getenv('PACKAGES')
