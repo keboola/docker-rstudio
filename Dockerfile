@@ -1,4 +1,4 @@
-FROM quay.io/keboola/docker-custom-r:1.9.3
+FROM quay.io/keboola/docker-custom-r:1.9.4
 # Copied from https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/3.5.2/Dockerfile
 
 ARG RSTUDIO_VERSION
@@ -67,7 +67,7 @@ RUN chmod +x /tini
 # Set proper paths and install r-transformation library (generate the install file on fly to avoid dependence on COPY)
 RUN update-alternatives --install /usr/bin/R R $R_HOME/bin/R 1 \
   && update-alternatives --install /usr/bin/Rscript Rscript $R_HOME/bin/Rscript 1 \
-  && printf "devtools::install_github('keboola/r-transformation', ref = '1.2.11')\n" >> /tmp-rstudio/init.R \
+  && printf "devtools::install_github('keboola/r-transformation', ref = '1.3.0')\n" >> /tmp-rstudio/init.R \
   && printf "install.packages('readr')\n" >> /tmp-rstudio/init.R \
   && R CMD javareconf \ 
   && printf "GITHUB_PAT=$GITHUB_PAT\n" > .Renviron \
