@@ -7,3 +7,7 @@ Docker image with [RStudio Sandbox](https://help.keboola.com/manipulation/transf
 * `docker-compose build`
 * `docker-compose up data-loader sandbox` and wait for it to setup
 * Visit `http://localhost:8787` in your browser and login with the creds set in your env vars 
+
+## License
+
+MIT licensed, see [LICENSE](./LICENSE) file.
